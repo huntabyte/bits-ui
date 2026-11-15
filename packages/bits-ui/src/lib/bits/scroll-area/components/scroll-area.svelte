@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolveDirProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { ScrollAreaRootProps } from "../types.js";
 	import { ScrollAreaRootState } from "../scroll-area.svelte.js";
@@ -10,7 +11,7 @@
 		ref = $bindable(null),
 		id = createId(uid),
 		type = "hover",
-		dir = "ltr",
+		dir,
 		scrollHideDelay = 600,
 		children,
 		child,
@@ -19,7 +20,7 @@
 
 	const rootState = ScrollAreaRootState.create({
 		type: boxWith(() => type),
-		dir: boxWith(() => dir),
+		dir: resolveDirProp(() => dir),
 		scrollHideDelay: boxWith(() => scrollHideDelay),
 		id: boxWith(() => id),
 		ref: boxWith(

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolveDirProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuRootProps } from "../types.js";
 	import { NavigationMenuRootState } from "../navigation-menu.svelte.js";
@@ -16,7 +17,7 @@
 		onValueChange = noop,
 		delayDuration = 200,
 		skipDelayDuration = 300,
-		dir = "ltr",
+		dir,
 		orientation = "horizontal",
 		...restProps
 	}: NavigationMenuRootProps = $props();
@@ -32,7 +33,7 @@
 		),
 		delayDuration: boxWith(() => delayDuration),
 		skipDelayDuration: boxWith(() => skipDelayDuration),
-		dir: boxWith(() => dir),
+		dir: resolveDirProp(() => dir),
 		orientation: boxWith(() => orientation),
 		ref: boxWith(
 			() => ref,
