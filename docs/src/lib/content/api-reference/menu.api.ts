@@ -143,7 +143,11 @@ const contentStaticProps = {
 
 const subContentProps = {
 	...contentProps,
-	side: floatingSideProp("right"),
+	side: {
+		...floatingSideProp("right (ltr) / left (rtl)"),
+		description:
+			"The preferred side of the anchor to render the submenu against when open. Defaults to right in LTR and left in RTL, using the menu root's resolved direction. Explicit sides are physical and do not change with direction. Will be reversed when collisions occur.",
+	},
 	loop: defineBooleanProp({
 		default: true,
 		description:
