@@ -3,7 +3,7 @@ import { render } from "vitest-browser-svelte";
 import { REGEXP_ONLY_DIGITS } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import PinInputTest from "./pin-input-test.svelte";
-import type { ComponentProps } from "svelte";
+import { tick, type ComponentProps } from "svelte";
 import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
@@ -34,6 +34,52 @@ async function setup(props: Partial<ComponentProps<typeof PinInputTest>> = {}) {
 
 afterEach(() => {
 	vi.resetAllMocks();
+});
+
+it("should cancel pending selection-sync timers on value changes and unmount", async () => {
+	const t = await setup();
+	const scheduled: number[] = [];
+	const cleared = new Set<number>();
+	const origSetTimeout = window.setTimeout.bind(window);
+	const origClearTimeout = window.clearTimeout.bind(window);
+	const setTimeoutSpy = vi.spyOn(window, "setTimeout").mockImplementation(((
+		fn: TimerHandler,
+		ms?: number,
+		...args: unknown[]
+	) => {
+		const id = origSetTimeout(fn, ms, ...args);
+		if (ms === 50) scheduled.push(id);
+		return id;
+	}) as typeof setTimeout);
+	const clearTimeoutSpy = vi.spyOn(window, "clearTimeout").mockImplementation((id) => {
+		if (typeof id === "number") cleared.add(id);
+		origClearTimeout(id);
+	});
+
+	try {
+		const input = t.hiddenInput.element() as HTMLInputElement;
+		input.value = "1";
+		input.dispatchEvent(new Event("input", { bubbles: true }));
+		await tick();
+
+		const firstTimer = scheduled.at(-1);
+		expect(firstTimer).toBeDefined();
+
+		input.value = "12";
+		input.dispatchEvent(new Event("input", { bubbles: true }));
+		await tick();
+
+		expect(cleared.has(firstTimer!)).toBe(true);
+		const secondTimer = scheduled.at(-1);
+		expect(secondTimer).toBeDefined();
+		expect(secondTimer).not.toBe(firstTimer);
+
+		await t.unmount();
+		expect(cleared.has(secondTimer!)).toBe(true);
+	} finally {
+		setTimeoutSpy.mockRestore();
+		clearTimeoutSpy.mockRestore();
+	}
 });
 
 it("should focus the hidden input when `inputRef.focus()` is called", async () => {
