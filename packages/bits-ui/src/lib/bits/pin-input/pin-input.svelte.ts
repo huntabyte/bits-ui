@@ -184,7 +184,8 @@ export class PinInputRootState {
 		});
 
 		watch([() => this.opts.value.current, () => this.opts.inputRef.current], () => {
-			syncTimeouts(() => {
+			const win = this.domContext.getWindow();
+			const timeouts = syncTimeouts(() => {
 				const input = this.opts.inputRef.current;
 				if (!input) return;
 				// forcefully remove :autofill state
@@ -200,6 +201,7 @@ export class PinInputRootState {
 					this.#prevInputMetadata.prev = [start, end, dir];
 				}
 			}, this.domContext);
+			return () => timeouts.forEach((timer) => win.clearTimeout(timer));
 		});
 
 		$effect(() => {
