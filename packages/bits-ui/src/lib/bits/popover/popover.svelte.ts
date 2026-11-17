@@ -259,6 +259,10 @@ export class PopoverTriggerState {
 	onclick(e: BitsMouseEvent) {
 		if (this.opts.disabled.current) return;
 		if (e.button !== 0) return;
+		const doc = e.currentTarget.ownerDocument;
+		if (!doc.activeElement || doc.activeElement === doc.body) {
+			e.currentTarget.focus({ preventScroll: true });
+		}
 
 		this.#clearAllTimeouts();
 
