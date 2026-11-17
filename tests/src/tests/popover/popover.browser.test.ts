@@ -20,6 +20,7 @@ import PopoverHoverTest, { type PopoverHoverTestProps } from "./popover-hover-te
 import PopoverHiddenTriggerTabsTest from "./popover-hidden-trigger-tabs-test.svelte";
 import PopoverScrollJitterTest from "./popover-scroll-jitter-test.svelte";
 import PopoverHideWhenDetachedTest from "./popover-hide-when-detached-test.svelte";
+import PopoverEditorToolbarTest from "./popover-editor-toolbar-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -518,6 +519,14 @@ it("should pass open snippet prop to overlay children", async () => {
 
 	await page.getByTestId("trigger").click();
 	await expect.element(overlayChild).toHaveAttribute("data-open", "true");
+});
+
+it("should keep focus on an external editor when the trigger prevents mousedown focus", async () => {
+	await render(PopoverEditorToolbarTest);
+	(page.getByTestId("editor").element() as HTMLElement).focus();
+	await page.getByTestId("trigger").click();
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("editor")).toHaveFocus();
 });
 
 describe("openOnHover", () => {

@@ -164,7 +164,10 @@ export class DialogTriggerState {
 	onclick(e: BitsMouseEvent) {
 		if (this.opts.disabled.current) return;
 		if (e.button > 0) return;
-		e.currentTarget.focus({ preventScroll: true });
+		const doc = e.currentTarget.ownerDocument;
+		if (!doc.activeElement || doc.activeElement === doc.body) {
+			e.currentTarget.focus({ preventScroll: true });
+		}
 		this.root.handleOpen();
 	}
 
