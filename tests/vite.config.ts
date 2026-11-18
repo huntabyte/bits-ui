@@ -22,6 +22,9 @@ const vitestBrowserConditionPlugin: Plugin = {
 };
 
 export default defineConfig({
+	resolve: {
+		dedupe: ["svelte"],
+	},
 	plugins: [
 		tailwindcss(),
 		vitestBrowserConditionPlugin,
