@@ -7,7 +7,7 @@ import type {
 	TooltipRootPropsWithoutHTML,
 	TooltipTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { FloatingSideProp } from "./extended-types/floating/index.js";
+import FloatingPhysicalSideProp from "./extended-types/floating/physical-side-prop.md";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -221,7 +221,7 @@ export const arrow = defineComponentApiSchema<TooltipArrowPropsWithoutHTML>({
 			name: "side",
 			description: "The side of the tooltip that the arrow is on.",
 			options: ["top", "right", "bottom", "left"],
-			value: FloatingSideProp,
+			value: FloatingPhysicalSideProp,
 		}),
 	],
 });
