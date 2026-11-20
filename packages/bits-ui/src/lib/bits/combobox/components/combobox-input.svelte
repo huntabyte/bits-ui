@@ -2,12 +2,14 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import type { ComboboxInputProps } from "../types.js";
-	import { useId } from "#lib/internal/use-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 	import { FloatingLayer } from "#lib/bits/utilities/floating-layer/index.js";
 	import { SelectInputState } from "#lib/bits/select/select.svelte.js";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		child,
 		defaultValue,

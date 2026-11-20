@@ -6,10 +6,11 @@ import type { Plugin } from "vite";
 
 const vitestBrowserConditionPlugin: Plugin = {
 	name: "vite-plugin-vitest-browser-condition",
-	//@ts-expect-error - idk
-	config({ resolve }: { resolve: { conditions: string[] } }) {
-		if (process.env.VITEST) {
-			resolve.conditions.unshift("browser");
+	// client environment only, so `// @vitest-environment node` tests can render with `svelte/server`
+	configEnvironment(name, config) {
+		if (process.env.VITEST && name === "client") {
+			config.resolve ??= {};
+			config.resolve.conditions = ["browser", ...(config.resolve.conditions ?? [])];
 		}
 	},
 };
