@@ -17,7 +17,7 @@ import {
 } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
 import type { BitsPointerEvent, RefAttachment, WithRefOpts } from "#lib/internal/types.js";
-import { type Direction, type Orientation, mergeProps, useId } from "#lib/shared/index.js";
+import { type Direction, type Orientation, mergeProps } from "#lib/shared/index.js";
 import { clamp } from "#lib/internal/clamp.js";
 import { debounce } from "#lib/internal/debounce.js";
 import { on } from "svelte/events";
@@ -113,7 +113,6 @@ export class ScrollAreaViewportState {
 	readonly opts: ScrollAreaViewportStateOpts;
 	readonly root: ScrollAreaRootState;
 	readonly attachment: RefAttachment;
-	#contentId = simpleBox(useId());
 	#contentRef = simpleBox<HTMLElement | null>(null);
 	readonly contentAttachment: RefAttachment = attachRef(
 		this.#contentRef,
@@ -142,7 +141,7 @@ export class ScrollAreaViewportState {
 	readonly contentProps = $derived.by(
 		() =>
 			({
-				id: this.#contentId.current,
+				id: `${this.opts.id.current}-content`,
 				"data-scroll-area-content": "",
 				/**
 				 * When horizontal scrollbar is visible: this element should be at least

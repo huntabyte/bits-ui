@@ -4,14 +4,16 @@
 	import type { ContextMenuContentProps } from "../types.js";
 	import { MenuContentState } from "#lib/bits/menu/menu.svelte.js";
 	import { CONTEXT_MENU_TRIGGER_ATTR } from "#lib/bits/menu/context-menu-attributes.js";
-	import { useId } from "#lib/internal/use-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 	import { noop } from "#lib/internal/noop.js";
 	import PopperLayer from "#lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { getFloatingContentCSSVars } from "#lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "#lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		child,
 		children,
 		ref = $bindable(null),

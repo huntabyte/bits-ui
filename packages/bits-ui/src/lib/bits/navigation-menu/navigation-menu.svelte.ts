@@ -20,7 +20,7 @@ import {
 import { Context, useDebounce, watch } from "runed";
 import { untrack, type Snippet } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
-import { type Direction, type Orientation, useId } from "#lib/shared/index.js";
+import { type Direction, type Orientation } from "#lib/shared/index.js";
 import {
 	createBitsAttrs,
 	boolToStr,
@@ -324,7 +324,6 @@ export class NavigationMenuListState {
 			new NavigationMenuListState(opts, NavigationMenuProviderContext.get())
 		);
 	}
-	wrapperId = simpleBox(useId());
 	wrapperRef = simpleBox<HTMLElement | null>(null);
 	readonly opts: NavigationMenuListStateOpts;
 	readonly context: NavigationMenuProviderState;
@@ -359,7 +358,7 @@ export class NavigationMenuListState {
 	readonly wrapperProps = $derived.by(
 		() =>
 			({
-				id: this.wrapperId.current,
+				id: `${this.opts.id.current}-wrapper`,
 				...this.wrapperAttachment,
 			}) as const
 	);
@@ -460,7 +459,6 @@ export class NavigationMenuTriggerState {
 	}
 	readonly opts: NavigationMenuTriggerStateOpts;
 	readonly attachment: RefAttachment;
-	focusProxyId = simpleBox(useId());
 	focusProxyRef = simpleBox<HTMLElement | null>(null);
 	readonly focusProxyAttachment: RefAttachment = attachRef(
 		this.focusProxyRef,
@@ -594,7 +592,7 @@ export class NavigationMenuTriggerState {
 	readonly focusProxyProps = $derived.by(
 		() =>
 			({
-				id: this.focusProxyId.current,
+				id: `${this.opts.id.current}-focus-proxy`,
 				tabindex: 0,
 				onfocus: this.focusProxyOnFocus,
 				...this.focusProxyAttachment,

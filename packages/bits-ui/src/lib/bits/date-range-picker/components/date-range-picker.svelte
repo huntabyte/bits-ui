@@ -9,17 +9,19 @@
 	import { PopoverRootState } from "#lib/bits/popover/popover.svelte.js";
 	import { DateRangeFieldRootState } from "#lib/bits/date-range-field/date-range-field.svelte.js";
 	import FloatingLayer from "#lib/bits/utilities/floating-layer/components/floating-layer.svelte";
-	import { useId } from "#lib/internal/use-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 	import type { DateRange } from "#lib/shared/index.js";
 	import { getDefaultDate } from "#lib/internal/date-time/utils.js";
 	import { resolveLocaleProp } from "#lib/bits/utilities/config/prop-resolvers.js";
+
+	const uid = $props.id();
 
 	let {
 		open = $bindable(false),
 		onOpenChange = noop,
 		onOpenChangeComplete = noop,
 		value = $bindable(),
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		onValueChange = noop,
 		placeholder = $bindable(),
