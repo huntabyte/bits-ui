@@ -1,5 +1,25 @@
 # bits-ui
 
+## 2.22.0
+
+### Minor Changes
+
+- Add a `dir` prop to `BitsConfig` to configure the default reading direction for components that support it. ([#2288](https://github.com/huntabyte/bits-ui/pull/2288))
+
+### Patch Changes
+
+- fix(Dialog, Popover): restore focus to pointer-activated triggers in WebKit ([#2304](https://github.com/huntabyte/bits-ui/pull/2304))
+
+- fix(PinInput): cancel pending selection-sync timers on teardown ([#2309](https://github.com/huntabyte/bits-ui/pull/2309))
+
+- fix(Popover): set `role="dialog"` on `Popover.Content` to match the trigger's `aria-haspopup="dialog"` (overridable via the `role` prop) ([#2300](https://github.com/huntabyte/bits-ui/pull/2300))
+
+- Default DropdownMenu, ContextMenu, and Menubar submenus to the left in RTL, using the menu root's resolved direction. Explicit physical sides still take precedence. ([#2306](https://github.com/huntabyte/bits-ui/pull/2306))
+
+- fix: generate deterministic SSR ids instead of a process-wide counter (NavigationMenu, ScrollArea, Combobox, ContextMenu, Calendar, DateRangePicker, floating arrows/content) ([#2312](https://github.com/huntabyte/bits-ui/pull/2312))
+
+- fix(Tooltip): preserve delayed-open state on repeated pointer entry ([#2305](https://github.com/huntabyte/bits-ui/pull/2305))
+
 ## 2.21.0
 
 ### Minor Changes
