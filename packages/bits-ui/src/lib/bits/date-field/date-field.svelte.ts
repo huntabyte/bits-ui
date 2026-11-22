@@ -106,7 +106,12 @@ const SEGMENT_CONFIGS: Record<
 		min: 1,
 		max: (root) => {
 			const placeholder = root.value.current ?? root.placeholder.current;
-			return getDaySegmentMaxValue(root.segmentValues.month, placeholder);
+			const parts = root.segmentContents.map((segment) => segment.part);
+			const monthBeforeDay = parts.indexOf("month") < parts.indexOf("day");
+			return getDaySegmentMaxValue(
+				monthBeforeDay ? root.segmentValues.month : null,
+				placeholder
+			);
 		},
 		cycle: 1,
 		padZero: true,

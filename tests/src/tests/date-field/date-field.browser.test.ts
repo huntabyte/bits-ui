@@ -1068,6 +1068,30 @@ describe("date field", () => {
 		await expect.element(t.value).toMatchTextContent("2026-12-31");
 	});
 
+	it.each([
+		{ value: new CalendarDate(2026, 11, 15), keys: "31122026", expected: "2026-12-31" },
+		{ value: new CalendarDate(2026, 2, 10), keys: "31012026", expected: "2026-01-31" },
+		{ value: new CalendarDate(2026, 2, 10), keys: "30042026", expected: "2026-04-30" },
+	])(
+		"should not bound the day by a month typed after it ($keys -> $expected)",
+		async ({ value, keys, expected }) => {
+			const t = await setup({ locale: "de-DE", value });
+
+			await t.day.click();
+			await userEvent.keyboard(keys);
+			await expect.element(t.value).toMatchTextContent(expected);
+		}
+	);
+
+	it("should still bound the day by a month typed before it", async () => {
+		const t = await setup({ locale: "en-US", value: new CalendarDate(2026, 2, 10) });
+
+		await t.day.click();
+		await userEvent.keyboard("{3}");
+		await expect.element(t.day).toMatchTextContent("03");
+		await expect.element(t.year).toHaveFocus();
+	});
+
 	it("should keep showing day 31 after typing the month in a date-time field", async () => {
 		const t = await setup({
 			locale: "en-GB",
