@@ -343,6 +343,15 @@ export class TooltipRootState {
 			{ lazy: true }
 		);
 
+		// a disabled trigger ignores blur and pointer leave, so close here
+		watch(
+			() => this.disabled,
+			(disabled) => {
+				if (disabled && this.opts.open.current) this.handleClose();
+			},
+			{ lazy: true }
+		);
+
 		watch(
 			() => this.opts.triggerId.current,
 			(triggerId) => {

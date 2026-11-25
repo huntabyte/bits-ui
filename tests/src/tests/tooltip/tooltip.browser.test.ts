@@ -143,6 +143,22 @@ it("should open on focus and close on blur", async () => {
 	await expectNotExists(page.getByTestId("content"));
 });
 
+it.each(["root", "provider"] as const)(
+	"should close when the %s becomes disabled while open",
+	async (source) => {
+		const t = await render(TooltipTest);
+		const trigger = page.getByTestId("trigger");
+		(trigger.element() as HTMLElement).focus();
+		await expectExists(page.getByTestId("content"));
+
+		await t.rerender(
+			source === "root" ? { disabled: true } : { providerProps: { disabled: true } }
+		);
+		await expectNotExists(page.getByTestId("content"));
+		await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+	}
+);
+
 it.each([false, true])(
 	"should stay open on pointer leave while the trigger has keyboard focus (disableHoverableContent: %s)",
 	async (disableHoverableContent) => {
