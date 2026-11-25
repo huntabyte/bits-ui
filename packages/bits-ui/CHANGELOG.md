@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.22.1
+
+### Patch Changes
+
+- fix(Tooltip): close an open tooltip when `Tooltip.Root` or `Tooltip.Provider` becomes `disabled` ([#2315](https://github.com/huntabyte/bits-ui/pull/2315))
+
 ## 2.22.0
 
 ### Minor Changes
