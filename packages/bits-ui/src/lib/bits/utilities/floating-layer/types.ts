@@ -1,6 +1,6 @@
 import type { Snippet } from "svelte";
 import type { ReadableBox } from "svelte-toolbelt";
-import type { Align, Boundary, Side } from "./use-floating-layer.svelte.js";
+import type { Align, Boundary, FloatingSide, Side } from "./use-floating-layer.svelte.js";
 import type { Arrayable } from "#lib/internal/types.js";
 import type { Direction, StyleProperties } from "#lib/shared/index.js";
 import type { Measurable } from "#lib/internal/floating-svelte/types.js";
@@ -8,11 +8,13 @@ import type { Measurable } from "#lib/internal/floating-svelte/types.js";
 export type FloatingLayerContentProps = {
 	/**
 	 * The preferred side of the anchor to render against when open.
-	 * Will be reversed when collisions occur.
+	 * Logical sides `inline-start` and `inline-end` resolve to left/right using
+	 * the resolved direction, for horizontal writing modes only. Physical sides
+	 * keep their meaning in both directions. May flip when collisions occur.
 	 *
 	 * @see https://floating-ui.com/docs/computePosition#placement
 	 */
-	side?: Side;
+	side?: FloatingSide;
 
 	/**
 	 * The distance in pixels from the anchor to the floating element.

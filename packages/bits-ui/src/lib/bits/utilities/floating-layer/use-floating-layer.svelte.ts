@@ -45,6 +45,7 @@ const OPPOSITE_SIDE: Record<Side, Side> = {
 const FloatingContentContext = new Context<FloatingContentState>("Floating.Content");
 
 export type Side = (typeof SIDE_OPTIONS)[number];
+export type FloatingSide = Side | "inline-start" | "inline-end";
 export type Align = (typeof ALIGN_OPTIONS)[number];
 
 export type Boundary = Element | null;
@@ -52,7 +53,7 @@ export type Boundary = Element | null;
 export interface FloatingContentStateOpts extends ReadableBoxedValues<{
 	id: string;
 	wrapperId: string;
-	side: Side;
+	side: FloatingSide;
 	sideOffset: number;
 	align: Align;
 	alignOffset: number;
@@ -103,13 +104,19 @@ export class FloatingContentState {
 	#arrowSize = new ElementSize(() => this.arrowRef.current ?? undefined);
 	#arrowWidth = $derived(this.#arrowSize?.width ?? 0);
 	#arrowHeight = $derived(this.#arrowSize?.height ?? 0);
-	#desiredPlacement = $derived.by(
-		() =>
-			(this.opts.side?.current +
-				(this.opts.align.current !== "center"
-					? `-${this.opts.align.current}`
-					: "")) as Placement
-	);
+	#desiredPlacement = $derived.by(() => {
+		const side = this.opts.side.current;
+		let physicalSide: Side;
+		if (side === "inline-start")
+			physicalSide = this.opts.dir.current === "rtl" ? "right" : "left";
+		else if (side === "inline-end")
+			physicalSide = this.opts.dir.current === "rtl" ? "left" : "right";
+		else physicalSide = side;
+		return (physicalSide +
+			(this.opts.align.current !== "center"
+				? `-${this.opts.align.current}`
+				: "")) as Placement;
+	});
 	#boundary = $derived.by(() =>
 		(Array.isArray(this.opts.collisionBoundary.current)
 			? this.opts.collisionBoundary.current

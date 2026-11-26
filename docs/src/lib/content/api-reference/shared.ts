@@ -173,10 +173,10 @@ export function withChildProps({ elType = "HTMLElement", children, child }: With
 
 export function floatingSideProp(defaultSide = "bottom"): PropSchema {
 	return defineEnumProp({
-		options: ["top", "bottom", "left", "right"],
+		options: ["top", "bottom", "left", "right", "inline-start", "inline-end"],
 		default: defaultSide,
 		description:
-			"The preferred side of the anchor to render the floating element against when open. Will be reversed when collisions occur.",
+			"The preferred side of the anchor to render the floating element against when open. Physical sides keep their meaning in both directions. For horizontal writing modes, inline-start is left in LTR and right in RTL; inline-end is the opposite. Logical sides follow the resolved direction reactively, including BitsConfig defaults and component overrides. Vertical writing modes are not supported. May flip when collisions occur; data-side and arrow placement always report the resulting physical side.",
 		definition: FloatingSideProp,
 	});
 }
