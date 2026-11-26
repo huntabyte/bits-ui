@@ -234,6 +234,14 @@ export type DatePickerRootPropsWithoutHTML = WithChildren<{
 	calendarLabel?: string;
 
 	/**
+	 * The level of the hidden heading that holds the `calendarLabel`, applied to its
+	 * `aria-level` attribute. Set it to fit the heading structure of the page.
+	 *
+	 * @default 2
+	 */
+	headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+
+	/**
 	 * Whether to disable the selection of days outside the current month. By default,
 	 * days outside the current month are rendered to fill the calendar grid, but they
 	 * are not selectable. Setting this prop to `true` will disable this behavior.

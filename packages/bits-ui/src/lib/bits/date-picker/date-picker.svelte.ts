@@ -33,6 +33,7 @@ interface DatePickerRootStateOpts
 			fixedWeeks: boolean;
 			numberOfMonths: number;
 			calendarLabel: string;
+			headingLevel: 1 | 2 | 3 | 4 | 5 | 6;
 			disableDaysOutsideMonth: boolean;
 			initialFocus: boolean;
 			onDateSelect?: () => void;

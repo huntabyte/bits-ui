@@ -71,6 +71,7 @@ interface CalendarRootStateOpts
 			numberOfMonths: number;
 			locale: string;
 			calendarLabel: string;
+			headingLevel: 1 | 2 | 3 | 4 | 5 | 6;
 			type: "single" | "multiple";
 			readonly: boolean;
 			disableDaysOutsideMonth: boolean;
@@ -285,6 +286,7 @@ export class CalendarRootState {
 			const removeHeading = createAccessibleHeading({
 				calendarNode: this.opts.ref.current,
 				label: this.fullCalendarLabel,
+				level: this.opts.headingLevel.current,
 				accessibleHeadingId: this.accessibleHeadingId,
 			});
 			return removeHeading;
