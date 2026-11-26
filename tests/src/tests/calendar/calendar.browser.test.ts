@@ -571,6 +571,24 @@ describe("type='single'", () => {
 				.element(page.getByTestId("date-3-1"))
 				.toHaveAttribute("aria-label", "Sunday, March 1, 2026");
 		});
+
+		it("should render the accessible heading at level 2 by default", async () => {
+			await setup({ placeholder: calendarDate, calendarLabel: "Booking date" });
+			await expect
+				.element(page.getByRole("heading", { name: "Booking date January 1980" }))
+				.toHaveAttribute("aria-level", "2");
+		});
+
+		it("should respect the `headingLevel` prop", async () => {
+			await setup({
+				placeholder: calendarDate,
+				calendarLabel: "Booking date",
+				headingLevel: 3,
+			});
+			await expect
+				.element(page.getByRole("heading", { name: "Booking date January 1980" }))
+				.toHaveAttribute("aria-level", "3");
+		});
 	});
 
 	describe("Availability and Interaction", () => {

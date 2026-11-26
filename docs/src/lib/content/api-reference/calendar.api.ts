@@ -28,6 +28,7 @@ import {
 	CalendarYearSelectChildSnippetProps,
 	CalendarYearSelectFormatProp,
 	DateMatcherProp,
+	HeaderLevelProp,
 	WeekdayFormatProp,
 } from "./extended-types/shared/index.js";
 import {
@@ -136,6 +137,13 @@ export const root = defineComponentApiSchema<CalendarRootPropsWithoutHTML>({
 		}),
 		calendarLabel: defineStringProp({
 			description: "The accessible label for the calendar.",
+		}),
+		headingLevel: defineUnionProp({
+			options: ["1", "2", "3", "4", "5", "6"],
+			definition: HeaderLevelProp,
+			description:
+				"The level of the hidden heading that holds the `calendarLabel`. This will be set as the `aria-level` attribute.",
+			default: "2",
 		}),
 		fixedWeeks: defineBooleanProp({
 			description: "Whether or not to always display 6 weeks in the calendar.",

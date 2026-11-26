@@ -24,6 +24,7 @@
 			(v) => (ref = v)
 		),
 		calendarLabel: datePickerRootState.opts.calendarLabel,
+		headingLevel: datePickerRootState.opts.headingLevel,
 		fixedWeeks: datePickerRootState.opts.fixedWeeks,
 		isDateDisabled: datePickerRootState.opts.isDateDisabled,
 		isDateUnavailable: datePickerRootState.opts.isDateUnavailable,

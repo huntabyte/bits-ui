@@ -595,6 +595,7 @@ export function useMonthViewOptionsSync(props: UseMonthViewSyncProps) {
 type CreateAccessibleHeadingProps = {
 	calendarNode: HTMLElement;
 	label: string;
+	level: number;
 	accessibleHeadingId: string;
 };
 
@@ -605,6 +606,7 @@ type CreateAccessibleHeadingProps = {
 export function createAccessibleHeading({
 	calendarNode,
 	label,
+	level,
 	accessibleHeadingId,
 }: CreateAccessibleHeadingProps) {
 	const doc = getDocument(calendarNode);
@@ -625,7 +627,7 @@ export function createAccessibleHeading({
 	h2.textContent = label;
 	h2.id = accessibleHeadingId;
 	h2.role = "heading";
-	h2.ariaLevel = "2";
+	h2.ariaLevel = String(level);
 	calendarNode.insertBefore(div, calendarNode.firstChild);
 	div.appendChild(h2);
 

@@ -159,6 +159,14 @@ type CalendarBaseRootPropsWithoutHTML = {
 	calendarLabel?: string;
 
 	/**
+	 * The level of the hidden heading that holds the `calendarLabel`, applied to its
+	 * `aria-level` attribute. Set it to fit the heading structure of the page.
+	 *
+	 * @default 2
+	 */
+	headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+
+	/**
 	 * The default locale setting.
 	 *
 	 * @default 'en'

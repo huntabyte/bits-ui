@@ -555,6 +555,17 @@ describe("correct weekday label formatting", () => {
 	});
 });
 
+it("should pass the `headingLevel` prop to the calendar", async () => {
+	await open({
+		placeholder: testDate,
+		calendarLabel: "Booking date",
+		headingLevel: 3,
+	});
+	await expect
+		.element(page.getByRole("heading", { name: "Booking date January 1980" }))
+		.toHaveAttribute("aria-level", "3");
+});
+
 it("should respect the `weekStartsOn` prop regardless of locale", async () => {
 	await open({
 		placeholder: new CalendarDate(1980, 1, 1),

@@ -66,6 +66,7 @@ export const root = defineComponentApiSchema<DatePickerRootPropsWithoutHTML>({
 		weekStartsOn: calendarRoot.props!.weekStartsOn,
 		weekdayFormat: calendarRoot.props!.weekdayFormat,
 		calendarLabel: calendarRoot.props!.calendarLabel,
+		headingLevel: calendarRoot.props!.headingLevel,
 		fixedWeeks: calendarRoot.props!.fixedWeeks,
 		maxValue: calendarRoot.props!.maxValue,
 		minValue: calendarRoot.props!.minValue,
