@@ -72,6 +72,9 @@
 							<DateRangePicker.Grid data-testid="grid-{m}">
 								<DateRangePicker.GridHead data-testid="grid-head-{m}">
 									<DateRangePicker.GridRow data-testid="grid-row-{m}">
+										<DateRangePicker.WeekNumberHeadCell
+											data-testid="week-number-head-cell-{m}"
+										/>
 										{#each weekdays as day, i (i)}
 											<DateRangePicker.HeadCell data-testid="weekday-{m}-{i}">
 												{day}
@@ -85,6 +88,10 @@
 											data-testid="grid-row-{m}-{i}"
 											data-week
 										>
+											<DateRangePicker.WeekNumberCell
+												week={weekDates}
+												data-testid="week-number-cell-{m}-{i}"
+											/>
 											{#each weekDates as date, d (d)}
 												<DateRangePicker.Cell
 													{date}

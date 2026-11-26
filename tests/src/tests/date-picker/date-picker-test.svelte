@@ -53,6 +53,9 @@
 							<DatePicker.Grid data-testid="grid-{m}">
 								<DatePicker.GridHead data-testid="grid-head-{m}">
 									<DatePicker.GridRow data-testid="grid-row-{m}">
+										<DatePicker.WeekNumberHeadCell
+											data-testid="week-number-head-cell-{m}"
+										/>
 										{#each weekdays as day, i (i)}
 											<DatePicker.HeadCell data-testid="weekday-{m}-{i}">
 												{day}
@@ -66,6 +69,10 @@
 											data-testid="grid-row-{m}-{i}"
 											data-week
 										>
+											<DatePicker.WeekNumberCell
+												week={weekDates}
+												data-testid="week-number-cell-{m}-{i}"
+											/>
 											{#each weekDates as date, d (d)}
 												<DatePicker.Cell
 													{date}

@@ -256,7 +256,7 @@ it("should not navigate after `maxValue` (with keyboard)", async () => {
 });
 
 it("should preserve the weekday when moving vertically across the month edge past disabled dates", async () => {
-	setup({
+	await setup({
 		placeholder: new CalendarDate(2026, 10, 27),
 		isDateDisabled: (date) => date.toDate("UTC").getUTCDay() === 1,
 	});
@@ -303,7 +303,7 @@ it("should not navigate before `minValue` (with keyboard)", async () => {
 });
 
 it("should preserve the weekday when moving vertically past disabled dates", async () => {
-	setup({
+	await setup({
 		placeholder: new CalendarDate(2026, 10, 13),
 		isDateDisabled: (date) =>
 			date.toDate("UTC").getUTCDay() === 1 || date.toString() === "2026-10-20",
@@ -389,7 +389,7 @@ describe("correct weekday label formatting", () => {
 			start: toZoned(new CalendarDateTime(2026, 3, 1), "Pacific/Kiritimati"),
 			end: toZoned(new CalendarDateTime(2026, 3, 5), "Pacific/Kiritimati"),
 		};
-		setup({ value, weekdayFormat: "short", weekStartsOn: 0 });
+		await setup({ value, weekdayFormat: "short", weekStartsOn: 0 });
 		for (const [i, weekday] of shortWeekdays.entries()) {
 			await expect.element(page.getByTestId(`weekday-3-${i}`)).toMatchTextContent(weekday);
 		}
@@ -432,6 +432,37 @@ it("should default the first day of the week to the locale's first day of the we
 		locale: "fr",
 	});
 	await expect.element(page.getByTestId("weekday-1-0").element()).toMatchTextContent("lun.");
+});
+
+describe("Week Numbers", () => {
+	it("should not render week number cells when `showWeekNumbers` is false (default)", async () => {
+		await setup({ placeholder: calendarDateRange.start });
+		const cell = page.getByTestId("week-number-cell-1-0");
+		const headCell = page.getByTestId("week-number-head-cell-1");
+		await expect.element(cell).not.toBeInTheDocument();
+		await expect.element(headCell).not.toBeInTheDocument();
+	});
+
+	it("should render week number cells when `showWeekNumbers` is true", async () => {
+		await setup({ placeholder: calendarDateRange.start, showWeekNumbers: true });
+		const headCell = page.getByTestId("week-number-head-cell-1");
+		const firstWeekCell = page.getByTestId("week-number-cell-1-0");
+		await expect.element(headCell).toBeInTheDocument();
+		await expect.element(firstWeekCell).toBeInTheDocument();
+	});
+
+	it("should anchor row week numbers to the row's Thursday", async () => {
+		await setup({ placeholder: calendarDateRange.start, showWeekNumbers: true });
+		const weekCell = page.getByTestId("week-number-cell-1-3");
+		await expect.element(weekCell).toMatchTextContent("04");
+	});
+
+	it("should display correct ISO week numbers at year boundaries", async () => {
+		const decDate = new CalendarDate(2024, 12, 1);
+		await setup({ placeholder: decDate, showWeekNumbers: true, weekStartsOn: 1 });
+		const lastWeekCell = page.getByTestId("week-number-cell-12-5");
+		await expect.element(lastWeekCell).toMatchTextContent("01");
+	});
 });
 
 describe("minDays and maxDays constraints", () => {
