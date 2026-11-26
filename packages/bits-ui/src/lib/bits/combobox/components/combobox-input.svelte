@@ -14,6 +14,8 @@
 		child,
 		defaultValue,
 		clearOnDeselect = false,
+		clearInputOnSelect = false,
+		removeOnBackspace = false,
 		...restProps
 	}: ComboboxInputProps = $props();
 
@@ -24,6 +26,8 @@
 			(v) => (ref = v)
 		),
 		clearOnDeselect: boxWith(() => clearOnDeselect),
+		clearInputOnSelect: boxWith(() => clearInputOnSelect),
+		removeOnBackspace: boxWith(() => removeOnBackspace),
 	});
 
 	untrack(() => {
